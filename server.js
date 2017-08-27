@@ -53,7 +53,7 @@ db.once("open", function() {
 
 require("./api/htmlRoutes")(app);
 require("./api/adminApi")(app);
-require("./api/mapApi")(app);
+//require("./api/mapApi")(app);
 
 
 

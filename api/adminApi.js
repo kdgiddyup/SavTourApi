@@ -4,7 +4,7 @@ var cors = require("cors");
 // do we need user?
 //var User = require("../app/models/user.js");
 var Location = require("../app/models/Location.js");
-var FriendofTour = require("../app/models/FriendofTour.js");
+var FriendsofTour = require("../app/models/FriendsofTour.js");
 
 module.exports = function(app) {
 
