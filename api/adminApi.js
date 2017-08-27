@@ -50,7 +50,7 @@ app.post("/api/new/location", function(req, res) {
 // Retrieve all saved locations
 app.get("/api/locations", function(req,res){
     // retrieve all location docs in Mongo DB
-    Locations.find ({}, function(err, places){
+    Location.find ({}, function(err, places){
       if(err){
         res.json(
             {
