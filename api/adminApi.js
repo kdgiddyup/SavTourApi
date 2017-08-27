@@ -1,8 +1,7 @@
 // allow requests from all domains
 var cors = require("cors");
 
-// do we need user?
-//var User = require("../app/models/user.js");
+var User = require("../app/models/user.js");
 var Location = require("../app/models/Location.js");
 var FriendsofTour = require("../app/models/FriendsofTour.js");
 
