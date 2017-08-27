@@ -130,7 +130,7 @@ app.post("/api/update/location/", function(req,res){
   });
 });
 
-/**** FRIENDS OF TOUR OPERATIIONS *****/
+/**** FRIENDS OF TOUR OPERATIONS *****/
 // add new friend of tour
     app.post("/api/new/friend", function(req,res){
         FriendsofTour.save(
