@@ -100,7 +100,8 @@ app.get("/api/remove/location/:id", function(req,res){
     else {
         res.json({
             success: true,
-            message:`${req.params.id} removed`
+            message:`${req.params.id} removed`,
+            location: req.params.id
         })
     }
   });
@@ -108,11 +109,11 @@ app.get("/api/remove/location/:id", function(req,res){
 
 // Update location
 // replaces location matching passed in ID with the req.body object, or creates it if it doesn't exist (upsert: true); returns new location object to application
-app.post("/api/update/location/:id", function(req,res){
+app.post("/api/update/location/", function(req,res){
 
-  console.log(`attempting to update ${req.params.id}`);
+  console.log(`attempting to update ${req.body._id}`);
 
-  Location.findOneAndUpdate({ __id: req.params.id }, req.body, {new:true, upsert: true}, function (err,updated) {
+  Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,updated) {
     if (err) {
         res.json({
             success:false,
@@ -122,7 +123,7 @@ app.post("/api/update/location/:id", function(req,res){
     else {
         res.json({
             success: true,
-            message:`${req.params.id} updated`,
+            message:`${req.body._id} updated`,
             location: updated
         })
     }
@@ -131,7 +132,7 @@ app.post("/api/update/location/:id", function(req,res){
 
 /**** FRIENDS OF TOUR OPERATIIONS *****/
 // add new friend of tour
-    app.get("/api/new/friend", function(req,res){
+    app.post("/api/new/friend", function(req,res){
         FriendsofTour.save(
             req.body,
             function( error, doc) {
