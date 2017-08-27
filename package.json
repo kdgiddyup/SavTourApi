@@ -1,0 +1,31 @@
+{
+  "name": "savtourapi",
+  "version": "1.0.0",
+  "description": "api to manage Savannah Tour of Homes mobile application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kdgiddyup/SavTourApi.git"
+  },
+  "author": "kdgiddyup",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kdgiddyup/SavTourApi/issues"
+  },
+  "homepage": "https://github.com/kdgiddyup/SavTourApi#readme",
+  "dependencies": {
+    "basic-auth-mongoose": "^0.1.1",
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "mongoose": "^4.11.8"
+  },
+  "devDependencies": {
+    "dotenv": "^4.0.0",
+    "morgan": "^1.8.2"
+  }
+}
