@@ -24,8 +24,8 @@ app.post("/api/new/location", function(req, res) {
             "lng":longitute}
         }
     */
-    var location = req.body;
-    Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,doc){
+    var location = new Location(req.body);
+    location.save( function (err,doc){
       // Send any errors to the browser
       if (err) {
         res.json({
@@ -108,11 +108,10 @@ app.get("/api/remove/location/:id", function(req,res){
 
 // Update location
 // replaces location matching passed in ID with the req.body object, or creates it if it doesn't exist (upsert: true); returns new location object to application
-app.post("/api/update/location/", function(req,res){
+app.post("/api/update/location/", function(req, res){
 
-  console.log(`attempting to update ${req.body._id}`);
-
-  Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,doc) {
+    console.log(`attempting to update ${req.body.id}`);
+    Location.findOneAndUpdate( {"__id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
     if (err) {
         res.json({
             success:false,
@@ -122,8 +121,8 @@ app.post("/api/update/location/", function(req,res){
     else {
         res.json({
             success: true,
-            message:`${req.body._id} updated`,
-            location: doc
+            message:`${req.body.id} updated`,
+            updatedLocation: doc
         })
     }
   });
@@ -132,9 +131,8 @@ app.post("/api/update/location/", function(req,res){
 /**** FRIENDS OF TOUR OPERATIONS *****/
 // add new friend of tour
     app.post("/api/new/friend", function(req,res){
-        // findOneAndUpdate takes search params, the data, options (new:true so we get the updated document back and upsert:true in case this friend already exists) and the callback fn
-        FriendsofTour.findOneAndUpdate({__id:friend.id}, req.body, {new: true,upsert:true},
-            function( error, doc) {
+        var friend = new FriendsofTour(req.body);
+        friend.save( function( error, doc) {
             // Send any errors to the browser
             if (error) {
               res.json({
@@ -153,6 +151,27 @@ app.post("/api/update/location/", function(req,res){
           });
         
     });
+
+    // update friend of tour
+    app.get("/api/update/friend/:id", function(req, res){
+        
+            console.log(`attempting to update ${req.params.id}`);
+            FriendofTour.findOneAndUpdate( {"__id":req.params.id}, req.body, {new:true, upsert: true}, function (err,doc) {
+            if (err) {
+                res.json({
+                    success:false,
+                    message:err
+                })
+            }
+            else {
+                res.json({
+                    success: true,
+                    message:`${req.params._id} updated`,
+                    updatedFriend: doc
+                })
+            }
+          });
+        });
 
     // Remove friend of tour
     app.get("/api/remove/friend/:id", function(req,res){
