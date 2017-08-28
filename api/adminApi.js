@@ -25,12 +25,12 @@ app.post("/api/new/location", function(req, res) {
         }
     */
     var location = req.body;
-    Location.save( function(error,location) {
+    Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,doc){
       // Send any errors to the browser
-      if (error) {
+      if (err) {
         res.json({
           success:false,
-          message: error
+          message: err
         });
       }
       // Otherwise, send success and location object back
@@ -112,7 +112,7 @@ app.post("/api/update/location/", function(req,res){
 
   console.log(`attempting to update ${req.body._id}`);
 
-  Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,updated) {
+  Location.findOneAndUpdate({ __id: req.body._id }, req.body, {new:true, upsert: true}, function (err,doc) {
     if (err) {
         res.json({
             success:false,
@@ -123,7 +123,7 @@ app.post("/api/update/location/", function(req,res){
         res.json({
             success: true,
             message:`${req.body._id} updated`,
-            location: updated
+            location: doc
         })
     }
   });
