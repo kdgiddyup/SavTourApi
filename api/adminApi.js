@@ -24,9 +24,8 @@ app.post("/api/new/location", function(req, res) {
             "lng":longitute}
         }
     */
-    Location.save(
-      req.body,
-      function( error, doc) {
+    var location = req.body;
+    Location.save( function(error,location) {
       // Send any errors to the browser
       if (error) {
         res.json({
@@ -133,8 +132,8 @@ app.post("/api/update/location/", function(req,res){
 /**** FRIENDS OF TOUR OPERATIONS *****/
 // add new friend of tour
     app.post("/api/new/friend", function(req,res){
-        FriendsofTour.save(
-            req.body,
+        // findOneAndUpdate takes search params, the data, options (new:true so we get the updated document back and upsert:true in case this friend already exists) and the callback fn
+        FriendsofTour.findOneAndUpdate({__id:friend.id}, req.body, {new: true,upsert:true},
             function( error, doc) {
             // Send any errors to the browser
             if (error) {
