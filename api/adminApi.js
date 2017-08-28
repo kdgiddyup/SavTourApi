@@ -21,7 +21,7 @@ app.post("/api/new/location", function(req, res) {
         "image":"url/to/image",
         "pos":{
             "lat":latitude,
-            "lng":longitute}
+            "lng":longitude}
         }
     */
     var location = new Location(req.body);
