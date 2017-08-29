@@ -89,7 +89,7 @@ app.get("/api/remove/location/:id", function(req,res){
 
   console.log(`attempting to remove ${req.params.id}`);
 
-  Location.remove({ __id: req.params.id }, function (err) {
+  Location.remove({ _id: req.params.id }, function (err) {
     if (err) {
         res.json({
             success:false,
@@ -111,7 +111,7 @@ app.get("/api/remove/location/:id", function(req,res){
 app.post("/api/update/location", function(req, res){
 
     console.log(`attempting to update ${req.body.id}`);
-    Location.findOneAndUpdate( {"__id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
+    Location.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
     if (err) {
         res.json({
             success:false,
@@ -156,7 +156,7 @@ app.post("/api/update/location", function(req, res){
     app.post("/api/update/friend", function(req, res){
         
             console.log(`attempting to update ${req.body.id}`);
-            FriendofTour.findOneAndUpdate( {"__id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
+            FriendofTour.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
             if (err) {
                 res.json({
                     success:false,
@@ -166,7 +166,7 @@ app.post("/api/update/location", function(req, res){
             else {
                 res.json({
                     success: true,
-                    message:`${doc.__id} updated`,
+                    message:`${doc._id} updated`,
                     updatedFriend: doc
                 })
             }
@@ -177,7 +177,7 @@ app.post("/api/update/location", function(req, res){
     app.get("/api/remove/friend/:id", function(req,res){
         console.log(`attempting to remove friend ${req.params.id}`);
 
-        FriendsofTour.remove({ __id: req.params.id }, function (err) {
+        FriendsofTour.remove({ _id: req.params.id }, function (err) {
         if (err) {
             res.json({
                 success:false,
