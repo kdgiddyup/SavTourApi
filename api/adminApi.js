@@ -89,7 +89,7 @@ app.get("/api/remove/location/:id", function(req,res){
 
   console.log(`attempting to remove ${req.params.id}`);
 
-  Location.remove({ __id: req.params.id }, {"new":true}, function (err) {
+  Location.remove({ __id: req.params.id }, function (err) {
     if (err) {
         res.json({
             success:false,
