@@ -39,7 +39,7 @@ app.post("/api/new/location", function(req, res) {
             // return the saved document as a complete mongo doc, so that it includes the doc._id
             {
             success: true,
-            savedLocation : doc
+            data : doc
           })
       }
     });
@@ -100,7 +100,7 @@ app.get("/api/remove/location/:id", function(req,res){
         res.json({
             success: true,
             message:`${req.params.id} removed`,
-            location: req.params.id
+            data: req.params.id
         })
     }
   });
@@ -122,7 +122,7 @@ app.post("/api/update/location", function(req, res){
         res.json({
             success: true,
             message:`${req.body.id} updated`,
-            updatedLocation: doc
+            data: doc
         })
     }
   });
@@ -145,7 +145,7 @@ app.post("/api/update/location", function(req, res){
               res.json(
                   {
                   success: true,
-                  savedFriend : doc
+                  data : doc
                 })
             }
           });
@@ -167,7 +167,7 @@ app.post("/api/update/location", function(req, res){
                 res.json({
                     success: true,
                     message:`${doc._id} updated`,
-                    updatedFriend: doc
+                    data: doc
                 })
             }
           });
