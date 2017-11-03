@@ -214,6 +214,92 @@ app.get("/api/friendsoftour", function(req,res){
     });
 });
 
+/**** TOUR EVENT OPERATIONS *****/
+// add new event 
+    app.post("/api/new/event", function(req,res){
+        var event = new Event(req.body);
+        event.save( function( error, doc) {
+            // Send any errors to the browser
+            if (error) {
+              res.json({
+                success:false,
+                message: error
+              });
+            }
+            // Otherwise, send success and friend doc back
+            else {
+              res.json(
+                  {
+                  success: true,
+                  data : doc
+                })
+            }
+          });
+        
+    });
+
+    // update event
+    app.post("/api/update/event", function(req, res){
+        
+            console.log(`attempting to update ${req.body.id}`);
+            Event.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
+            if (err) {
+                res.json({
+                    success:false,
+                    message:err
+                })
+            }
+            else {
+                res.json({
+                    success: true,
+                    message:`Event ${doc._id} updated`,
+                    data: doc
+                })
+            }
+          });
+        });
+
+    // Remove event
+    app.get("/api/remove/event/:id", function(req,res){
+        console.log(`attempting to remove event ${req.params.id}`);
+
+        Event.remove({ _id: req.params.id }, function (err) {
+        if (err) {
+            res.json({
+                success:false,
+                message:err
+            })
+        }
+        else {
+            res.json({
+                success: true,
+                message:`${req.params.id} removed`
+            })
+        }
+        });
+    });
+
+// Retrieve all tour events
+app.get("/api/events", function(req,res){
+    // retrieve all event docs in Mongo DB
+    Event.find ({}, function(err, data){
+      if(err){
+        res.json(
+            {
+                success:false,
+                message:err
+            });
+      }
+      else{
+        res.json(
+            {
+                success:true,
+                data:data
+            });
+      }
+    });
+});
+
 /**** USER OPERATIONS ****/
 
 // Save new user to mongoDB
