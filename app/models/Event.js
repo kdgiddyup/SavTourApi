@@ -20,10 +20,6 @@ var EventSchema = new Schema({
   },
 });
 
-
-
-id, title, description, start, end
-
 var Event = mongoose.model("Event", EventSchema);
 
 module.exports = Event;
