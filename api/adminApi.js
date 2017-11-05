@@ -1,10 +1,10 @@
 // allow requests from all domains
 var cors = require("cors");
 
-var User = require("./../app/models/User.js");
-var Location = require("./../app/models/Location.js");
-var FriendsofTour = require("./../app/models/FriendsofTour.js");
-var Event = require("./../app/models/Event.js");
+var Location = require("./../app/models/Location");
+var FriendsofTour = require("./../app/models/FriendsofTour");
+var Event = require("./../app/models/Event");
+var User = require("./../app/models/User");
 
 module.exports = function(app) {
 
