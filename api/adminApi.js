@@ -5,7 +5,7 @@ var User = require("../app/models/User.js");
 var Location = require("../app/models/Location.js");
 var FriendsofTour = require("../app/models/FriendsofTour.js");
 var Event = require("../app/models/Event.js");
-var Sponsor = require("../app/models/Sponsor.js");
+
 module.exports = function(app) {
 
 /*****  LOCATION OPERATIONS ****/    
@@ -215,8 +215,6 @@ app.get("/api/friendsoftour", function(req,res){
     });
 });
 
-<<<<<<< HEAD
-=======
 /**** TOUR EVENT OPERATIONS *****/
 // add new event 
     app.post("/api/new/event", function(req,res){
