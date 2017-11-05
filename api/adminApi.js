@@ -4,6 +4,7 @@ var cors = require("cors");
 var User = require("../app/models/User.js");
 var Location = require("../app/models/Location.js");
 var FriendsofTour = require("../app/models/FriendsofTour.js");
+var Event = require("../app/models/Event.js");
 var Sponsor = require("../app/models/Sponsor.js");
 module.exports = function(app) {
 
@@ -301,7 +302,6 @@ app.get("/api/events", function(req,res){
       }
     });
 });
->>>>>>> 6ec2670c06150904ce8fa21fc736bd0353c55666
 
 /**** USER OPERATIONS ****/
 
