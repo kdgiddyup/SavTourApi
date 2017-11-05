@@ -10,7 +10,7 @@ var cors = require("cors");
 const dotenv=require("dotenv");
 dotenv.config();
 
-// using the cors module to simply setting headers
+// using the cors module to simplify setting headers
 app.use(cors());
 
 // BodyParser makes it easy for our server to interpret data sent to it.
