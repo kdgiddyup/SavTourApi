@@ -7,7 +7,7 @@ var FriendsofTour = require("./../app/models/FriendsofTour");
 
 var Event = require("./../app/models/Event");
 
-var User = require("./../app/models/User");
+var User = require("./../app/models/Users");
 
 module.exports = function(app) {
 
