@@ -46,17 +46,10 @@ db.once("open", function() {
 
 // ===================================================
 // ROUTES
-// geniusApi routes handle requests to the Genius api.
-// mongooseAPI routes handle mongoDB actions.
-// htmlRoutes serves the homepage
 // ===================================================
 
 require("./api/htmlRoutes")(app);
 require("./api/adminApi")(app);
-//require("./api/mapApi")(app);
-
-
-
 
 // Sets an initial port. We"ll use this later in our listener
 var PORT = process.env.PORT || 8080;
