@@ -2,8 +2,11 @@
 var cors = require("cors");
 
 var Location = require("./../app/models/Location");
+
 var FriendsofTour = require("./../app/models/FriendsofTour");
+
 var Event = require("./../app/models/Event");
+
 var User = require("./../app/models/User");
 
 module.exports = function(app) {
