@@ -1,12 +1,9 @@
 // allow requests from all domains
 var cors = require("cors");
 
+// bring in data models
 var Location = require("./../app/models/Location");
-
-var FriendsofTour = require("./../app/models/FriendsofTour");
-
 var Event = require("./../app/models/Event");
-
 var User = require("./../app/models/Users");
 
 module.exports = function(app) {
@@ -133,90 +130,124 @@ app.post("/api/update/location", function(req, res){
 });
 
 /**** FRIENDS OF TOUR OPERATIONS *****/
-// add new friend of tour
-    app.post("/api/new/friend", function(req,res){
-        var friend = new FriendsofTour(req.body);
-        friend.save( function( error, doc) {
-            // Send any errors to the browser
-            if (error) {
-              res.json({
-                success:false,
-                message: error
-              });
-            }
-            // Otherwise, send success and friend doc back
-            else {
-              res.json(
-                  {
-                  success: true,
-                  data : doc
-                })
-            }
-          });
+/*** Friends of Tour scraping ***/
+app.get("/api/friends/", function(req,res){
+    // load our scraping tools
+    const cheerio = require("cheerio");
+    const request = require("request");
+    
+    // pass URL retrieved from front-end request to the request module
+    request(req.query.source, (error, response, html ) => {
+        if (!error && response.statusCode == 200) {
         
-    });
-
-    // update friend of tour
-    app.post("/api/update/friend", function(req, res){
-        
-            console.log(`attempting to update ${req.body.id}`);
-            FriendofTour.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
-            if (err) {
-                res.json({
-                    success:false,
-                    message:err
-                })
-            }
-            else {
-                res.json({
-                    success: true,
-                    message:`${doc._id} updated`,
-                    data: doc
-                })
-            }
-          });
-        });
-
-    // Remove friend of tour
-    app.get("/api/remove/friend/:id", function(req,res){
-        console.log(`attempting to remove friend ${req.params.id}`);
-
-        FriendsofTour.remove({ _id: req.params.id }, function (err) {
-        if (err) {
-            res.json({
-                success:false,
-                message:err
+            //all good with request? load "html" into the cheerio library as $
+            const $ = cheerio.load(html);
+            var friends = $(".entry-content").children("ul").children("li");
+            var data=[];
+            $(friends).each( (index,element)=>{
+                data.push(element.children[0].data);
+            });
+            res.status(200).json({
+                "success": true,
+                "data": data
             })
         }
         else {
-            res.json({
-                success: true,
-                message:`${req.params.id} removed`
+            console.log("Error scraping friends",error);
+            res.status(500).json({
+                "success": false,
+                "data" : "There was an error retrieving friends data."
             })
         }
-        });
-    });
+      });
+          
+    
+}); // end Friends of tour scraping 
 
-// Retrieve all friends of tour
-app.get("/api/friendsoftour", function(req,res){
-    // retrieve all friendsoftour docs in Mongo DB
-    FriendsofTour.find ({}, function(err, friends){
-      if(err){
-        res.json(
-            {
-                success:false,
-                message:err
-            });
-      }
-      else{
-        res.json(
-            {
-                success:true,
-                data:friends
-            });
-      }
-    });
-});
+// // add new friend of tour
+//     app.post("/api/new/friend", function(req,res){
+//         var friend = new FriendsofTour(req.body);
+//         friend.save( function( error, doc) {
+//             // Send any errors to the browser
+//             if (error) {
+//               res.json({
+//                 success:false,
+//                 message: error
+//               });
+//             }
+//             // Otherwise, send success and friend doc back
+//             else {
+//               res.json(
+//                   {
+//                   success: true,
+//                   data : doc
+//                 })
+//             }
+//           });
+        
+//     });
+
+//     // update friend of tour
+//     app.post("/api/update/friend", function(req, res){
+        
+//             console.log(`attempting to update ${req.body.id}`);
+//             FriendofTour.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
+//             if (err) {
+//                 res.json({
+//                     success:false,
+//                     message:err
+//                 })
+//             }
+//             else {
+//                 res.json({
+//                     success: true,
+//                     message:`${doc._id} updated`,
+//                     data: doc
+//                 })
+//             }
+//           });
+//         });
+
+//     // Remove friend of tour
+//     app.get("/api/remove/friend/:id", function(req,res){
+//         console.log(`attempting to remove friend ${req.params.id}`);
+
+//         FriendsofTour.remove({ _id: req.params.id }, function (err) {
+//         if (err) {
+//             res.json({
+//                 success:false,
+//                 message:err
+//             })
+//         }
+//         else {
+//             res.json({
+//                 success: true,
+//                 message:`${req.params.id} removed`
+//             })
+//         }
+//         });
+//     });
+
+// // Retrieve all friends of tour
+// app.get("/api/friendsoftour", function(req,res){
+//     // retrieve all friendsoftour docs in Mongo DB
+//     FriendsofTour.find ({}, function(err, friends){
+//       if(err){
+//         res.json(
+//             {
+//                 success:false,
+//                 message:err
+//             });
+//       }
+//       else{
+//         res.json(
+//             {
+//                 success:true,
+//                 data:friends
+//             });
+//       }
+//     });
+// });
 
 /**** TOUR EVENT OPERATIONS *****/
 // add new event 
