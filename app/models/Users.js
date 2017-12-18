@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+var UserSchema = new Schema({ 
  // basic-auth-mongoose plugin will add user/pass fields
 });
 
