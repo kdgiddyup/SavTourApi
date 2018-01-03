@@ -1,6 +1,6 @@
 // auth modules
 var jwt = require("jsonwebtoken");
-var config = require("./config.js");
+var config = require("./../config.js");
    
 verifyToken = (req, res,  next)=>{
     var token = req.headers["x-access-token"];
@@ -12,7 +12,7 @@ verifyToken = (req, res,  next)=>{
     }
     // if token is present, pass it to jwt (jsonwebtoken) module for decoding
     else {
-        jwt.verify( token, config.auth.authSecret, (err, decoded)=>{
+        jwt.verify( token, config.authSecret, (err, decoded)=>{
             if (err) {
                 res.status(500).json({
                     auth: false,
@@ -21,6 +21,7 @@ verifyToken = (req, res,  next)=>{
             }
             // token is verified; save ID and admin status to req for use in other routes
             else {
+                console.log("decoded:",decoded);
                 req.userId = decoded.id;
                 // send flow to next() function
                 next();

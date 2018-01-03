@@ -5,6 +5,15 @@ var cors = require("cors");
 var Location = require("./../app/models/Location");
 var Event = require("./../app/models/Event");
 var User = require("./../app/models/Users");
+var Client = require("./../app/models/Client.js");
+
+// custom middleware to verify web tokens in auth process and keep a record of user's source apps
+var VerifyToken = require("./../auth/verifyToken.js");
+
+var config = require("./../config.js");
+
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
 
 module.exports = function(app) {
 
@@ -164,90 +173,7 @@ app.get("/api/friends/", function(req,res){
     
 }); // end Friends of tour scraping 
 
-// // add new friend of tour
-//     app.post("/api/new/friend", function(req,res){
-//         var friend = new FriendsofTour(req.body);
-//         friend.save( function( error, doc) {
-//             // Send any errors to the browser
-//             if (error) {
-//               res.json({
-//                 success:false,
-//                 message: error
-//               });
-//             }
-//             // Otherwise, send success and friend doc back
-//             else {
-//               res.json(
-//                   {
-//                   success: true,
-//                   data : doc
-//                 })
-//             }
-//           });
-        
-//     });
 
-//     // update friend of tour
-//     app.post("/api/update/friend", function(req, res){
-        
-//             console.log(`attempting to update ${req.body.id}`);
-//             FriendofTour.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
-//             if (err) {
-//                 res.json({
-//                     success:false,
-//                     message:err
-//                 })
-//             }
-//             else {
-//                 res.json({
-//                     success: true,
-//                     message:`${doc._id} updated`,
-//                     data: doc
-//                 })
-//             }
-//           });
-//         });
-
-//     // Remove friend of tour
-//     app.get("/api/remove/friend/:id", function(req,res){
-//         console.log(`attempting to remove friend ${req.params.id}`);
-
-//         FriendsofTour.remove({ _id: req.params.id }, function (err) {
-//         if (err) {
-//             res.json({
-//                 success:false,
-//                 message:err
-//             })
-//         }
-//         else {
-//             res.json({
-//                 success: true,
-//                 message:`${req.params.id} removed`
-//             })
-//         }
-//         });
-//     });
-
-// // Retrieve all friends of tour
-// app.get("/api/friendsoftour", function(req,res){
-//     // retrieve all friendsoftour docs in Mongo DB
-//     FriendsofTour.find ({}, function(err, friends){
-//       if(err){
-//         res.json(
-//             {
-//                 success:false,
-//                 message:err
-//             });
-//       }
-//       else{
-//         res.json(
-//             {
-//                 success:true,
-//                 data:friends
-//             });
-//       }
-//     });
-// });
 
 /**** TOUR EVENT OPERATIONS *****/
 // add new event 
@@ -336,12 +262,48 @@ app.get("/api/events", function(req,res){
 });
 
 /**** USER OPERATIONS ****/
+// generate system token
+app.post("/api/token", VerifyToken, (req, res, next)=>{
+    var clientUser = new Client(req.body);
+    clientUser.save( (error,client)=>{
+        console.log("ERROR",error,"CLIENT:",client);
+        var token = jwt.sign({
+            id : client._id
+        }, config.authSecret);
+        if (error) {
+            if (error.code == 11000) {
+              var message = "That client already exists. Try again!"
+            };
+            res.json({
+                "success":false,
+                "message": message,
+                "error": error
+            })
+        }
+        else { 
+            res.json({
+                "success":true,
+                "client": {
+                    name: client.name,
+                    email: client.email
+                },
+                "id": client._id,
+                "token":token,
+                "message":`Client ${client.username} created. Keep token in a safe place.`
+            })
+        }
+    })
+}); // end generate system token route
 
 // Save new user to mongoDB
-    app.post("/api/signup", function(req, res){
-        console.log("sign up route hit");
+    app.post("/api/signup", VerifyToken, function(req, res, next){
         var newUser = new User(req.body);
         newUser.save(function(error,user){
+            var token = jwt.sign({
+                id : newUser._id
+            }, config.authSecret, {
+                expiresIn: 86400 // 24 hours
+            });
             if (error) {
                 if (error.code == 11000) {
                   var message = "That username already exists. Try again!"
@@ -356,6 +318,7 @@ app.get("/api/events", function(req,res){
                 res.json({
                     "success":true,
                     "user":req.body.username,
+                    "token":token,
                     "message":`Welcome, ${req.body.username}`
                 })
             }
@@ -363,7 +326,7 @@ app.get("/api/events", function(req,res){
     }); // end signup post route
 
 // log-in user
-    app.post("/api/signin",function(req,res){
+    app.post("/api/signin", function(req,res){
       User.findOne({'username' : req.body.username}, function (err, user) {
       if (err) console.log(err)
       else {
@@ -374,8 +337,15 @@ app.get("/api/events", function(req,res){
               })
           }
           else if (user.authenticate(req.body.password)) {
-              res.json({
+             // log in successful; generate token and send it back to front
+            var token = jwt.sign({ 
+                id: user._id 
+            }, config.authSecret, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+            res.json({
                 "success":true,
+                "token": token,
                 "user":req.body.username,
                 "message":`Welcome, ${req.body.username}`
               })
