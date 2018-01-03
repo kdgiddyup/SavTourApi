@@ -19,7 +19,7 @@ module.exports = function(app) {
 
 /*****  LOCATION OPERATIONS ****/    
 // Save location
-app.post("/api/new/location", function(req, res) {
+app.post("/api/new/location", VerifyToken, function(req, res, next) {
 
     // location object (req.body) looks like:  
     /* {
@@ -57,7 +57,7 @@ app.post("/api/new/location", function(req, res) {
 
 
 // Retrieve all saved locations
-app.get("/api/locations", function(req,res){
+app.get("/api/locations", VerifyToken, function(req,res){
     // retrieve all location docs in Mongo DB
     Location.find ({}, function(err, places){
       if(err){
@@ -95,10 +95,8 @@ app.get("/api/locations", function(req,res){
 });
 
 // Remove location
-app.get("/api/remove/location/:id", function(req,res){
-
+app.get("/api/remove/location/:id", VerifyToken, function(req,res,next){
   console.log(`attempting to remove ${req.params.id}`);
-
   Location.remove({ _id: req.params.id }, function (err) {
     if (err) {
         res.json({
@@ -118,7 +116,7 @@ app.get("/api/remove/location/:id", function(req,res){
 
 // Update location
 // replaces location matching passed in ID with the req.body object, or creates it if it doesn't exist (upsert: true); returns new location object to application
-app.post("/api/update/location", function(req, res){
+app.post("/api/update/location", VerifyToken, function(req, res, next){
 
     console.log(`attempting to update ${req.body.id}`);
     Location.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
@@ -140,7 +138,7 @@ app.post("/api/update/location", function(req, res){
 
 /**** FRIENDS OF TOUR OPERATIONS *****/
 /*** Friends of Tour scraping ***/
-app.get("/api/friends/", function(req,res){
+app.get("/api/friends/", VerifyToken, function(req,res,next){
     // load our scraping tools
     const cheerio = require("cheerio");
     const request = require("request");
@@ -177,7 +175,7 @@ app.get("/api/friends/", function(req,res){
 
 /**** TOUR EVENT OPERATIONS *****/
 // add new event 
-    app.post("/api/new/event", function(req,res){
+    app.post("/api/new/event", VerifyToken, function(req,res, next){
         var event = new Event(req.body);
         event.save( function( error, doc) {
             // Send any errors to the browser
@@ -200,7 +198,7 @@ app.get("/api/friends/", function(req,res){
     });
 
     // update event
-    app.post("/api/update/event", function(req, res){
+    app.post("/api/update/event", VerifyToken, function(req, res, next){
         
             console.log(`attempting to update ${req.body.id}`);
             Event.findOneAndUpdate( {"_id":req.body.id}, req.body, {new:true, upsert: true}, function (err,doc) {
@@ -221,7 +219,7 @@ app.get("/api/friends/", function(req,res){
         });
 
     // Remove event
-    app.get("/api/remove/event/:id", function(req,res){
+    app.get("/api/remove/event/:id", VerifyToken, function(req,res,next){
         console.log(`attempting to remove event ${req.params.id}`);
 
         Event.remove({ _id: req.params.id }, function (err) {
@@ -241,7 +239,7 @@ app.get("/api/friends/", function(req,res){
     });
 
 // Retrieve all tour events
-app.get("/api/events", function(req,res){
+app.get("/api/events", VerifyToken, function(req,res,next){
     // retrieve all event docs in Mongo DB
     Event.find ({}, function(err, data){
       if(err){
