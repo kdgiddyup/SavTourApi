@@ -358,9 +358,10 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
 
     // retrieve all users
     app.get("/api/users", VerifyToken, function(req,res,next){
-        // retrieve all location docs in Mongo DB
-        User.find({}, 
-            (err, users)=>{
+        // retrieve all user records in Mongo DB
+        User.find({})
+        .select("username _id") 
+        .exec( (err, users)=>{
         if(err){
             res.json(
                 {
@@ -375,7 +376,7 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
                     data:users
                 });
         }
-        });
+        });  // end user .exec callback
     });
 
     // update user
