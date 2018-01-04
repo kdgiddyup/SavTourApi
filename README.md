@@ -28,9 +28,10 @@ $.ajax({
 ```
 ## Quick links
 - [Tour locations](#tour-locations)
-- [Friends of Tour](#friends-of-tour-management)
-- [Tour events](#tour-event-management)
-- [User management](#user-management)
+- [Friends of Tour](#friends-of-tour)
+- [Tour events](#tour-events)
+- [Users](#users)
+- [Clients](#clients)
 
 ## Tour locations    
 - [Retrieve all locations](#retrieve-all-locations)
@@ -184,7 +185,7 @@ $.ajax({
 }
 ```
 
-## User management
+## Users
 
 *Notes:* Only a properly logged-in administrative user can manage users.
 
@@ -264,13 +265,16 @@ Passwords are hashed before database storage. They are not returned with any oth
 
 *Returns:* Success message that confirms the ID of the removed user. 
 
-### Create system token
+## Clients
+
+- [Add new client](#add-new-client)
+### Add new client
 
 *Method:* POST
 
-*Endpoint:* `/api/token`
+*Endpoint:* `/api/new/client`
 
-*Notes:* This endpoint provides for the creation of a token that can be used by an app to access endpoints. 
+*Notes:* This endpoint provides for the creation of a token that can be used by a client app to access endpoints. 
 
 *Important:* The database will NOT store the token. It should be stored in a secure place by the app developer. 
 

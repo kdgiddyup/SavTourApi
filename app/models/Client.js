@@ -6,9 +6,9 @@ var ClientSchema = new Schema({
         type: String,
         required: true
         },
-    email: {
+    clientEmail: {
         type: String,
-        unique: true
+        required: true
 }
 });
 var Client = mongoose.model("Client", ClientSchema);
