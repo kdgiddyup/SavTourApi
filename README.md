@@ -10,7 +10,7 @@ Example, where variable `token` holds the login token:
 
 ```javascript
 $.ajax({
-    *Method:* "GET",
+    method: "GET",
     url: apiHost + apiEndpoint,
     beforeSend: function(request){
         request.setRequestHeader("x-access-token", token) 
