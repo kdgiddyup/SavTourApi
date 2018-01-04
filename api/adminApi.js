@@ -297,11 +297,6 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
     app.post("/api/signup", VerifyToken, function(req, res, next){
         var newUser = new User(req.body);
         newUser.save(function(error,user){
-            var token = jwt.sign({
-                id : newUser._id
-            }, config.authSecret, {
-                expiresIn: 86400 // 24 hours
-            });
             if (error) {
                 if (error.code == 11000) {
                   var message = "That username already exists. Try again!"
@@ -312,11 +307,9 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
                 })
             }
             else { 
-                console.log("Success",user.username);
                 res.json({
                     "success":true,
                     "user":req.body.username,
-                    "token":token,
                     "message":`Welcome, ${req.body.username}`
                 })
             }

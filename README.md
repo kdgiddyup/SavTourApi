@@ -1,14 +1,53 @@
 # SavTourApi
-API to serve the Savannah Tour mobile app
+API to serve the Savannah Tour mobile app and control panel
 
-* LOCATION OPERATIONS    
+Host: `https://savtourapi.herokuapp.com`
 
-1. Retrieve all locations
+#### Notes
+All endpoints but admin user login are protected from public access in that they require an expiring token generated through successful login. Developers should pass this token with ajax calls to this API by setting the x-access-token header.
 
-GET: "/api/locations"
+Example, where variable `token` holds the login token: 
 
-/* when data is present, response looks like:
+```javascript
+$.ajax({
+    *Method:* "GET",
+    url: apiHost + apiEndpoint,
+    beforeSend: function(request){
+        request.setRequestHeader("x-access-token", token) 
+        }
+    })
+    .done( function(response){
+        console.log(response);
+        // hooray! it worked. response contains data...
+    })
+    .fail( function(err){
+        console.log("Error retrieving data:",err);
+        // something went wrong.
+    })
+}
+```
+## Endpoint quick links
+- [Tour locations](#tour-locations)
+- [Friends of Tour management](#friends-of-tour-management)
+- [Tour event management](#tour-event-management)
+- [User management](#user-management)
 
+## Tour locations    
+- [Retrieve all locations](#retrieve-all-locations)
+- [Add new location](#add-new-location)
+- [Remove location](#remove-location)
+- [Update location](#update-location)
+
+### Retrieve all locations
+
+*Method:* GET
+
+*Endpoint:* `/api/locations`
+
+*Returns:* Tour sponsor and stop data
+
+When data is present, response looks like:
+```javascript
 [   
     {
         
@@ -24,16 +63,19 @@ GET: "/api/locations"
         "_id":id
     },
     {
-        ... next place ...
+        //next place
     }
 ]
+```
 
-2. Add new location
+### Add new location
 
-POST: "/api/new/location"
+*Method:* POST
 
-location object (req.body) looks like:  
+*Endpoint:* `/api/new/location`
 
+*Returns:* New location object:  
+```javascript
 {
 
     "name":"Location name",
@@ -46,60 +88,123 @@ location object (req.body) looks like:
         "lat":latitude,
         "lng":longitude}
 }
+```
 
+### Remove location
 
-3. Remove location
+*Method:* GET
 
-GET: "/api/remove/location/:id"
+*Endpoint:* `/api/remove/location/<id>`
 
-4. Update location
+Note: `<id>` is the ID of the tour location you wish to delete from the database.
 
-POST: "/api/update/location"
+### Update location
 
-(post body must include { id : id } property)
+*Method:* POST
 
-* FRIENDS OF TOUR OPERATIONS
+*Endpoint:* `/api/update/location`
 
-1. Retrieve all friends of tour
+*Notes:* Post body must include `id` property along with any properties you with to alter.
 
-GET: "/api/friendsoftour"
+*Returns:* Updated location object.
 
-2. Update friend of tour
+## Friends of Tour management
 
-POST: "/api/update/friend"
+- [Retrieve Friends of Tour](#retrieve-friends-of-tour)
 
-(post body must include { id : id } property)
+### Retrieve Friends of Tour
 
-3. Remove friend of tour
-GET: "/api/remove/friend/:id"
+*Notes:* For now, we are just scraping Friends of Tour data from the main Tour website.
 
-4. Add new friend of tour
-POST: "/api/new/friend"
+*Method:* GET
 
-* TOUR EVENT OPERATIONS
+*Endpoint:* `/api/friends`
 
-1. Retrieve all tour events
-Get: "/api/events"
+*Returns:* Array of current "Friends of the Tour"
 
-2. Update event
+## Tour event management
 
-POST: "/api/update/event"
+- [Retrieve all events](#retrieve-all-events)
+- [Update event](#update-event)
+- [Remove event](#remove-event)
+- [Add event](#add-event)
 
-(post body must include { id : id } property)
+### Retrieve all events
 
-3. Remove event
+*Method:* GET
 
-GET: "/api/remove/event/:id"
+*Endpoint:* `/api/events`
 
-4. Add new event 
+*Returns:* All events in database. Events look like:
+```javascript
+[
+    { 
+        "title": "<title>",
+        "description": "<description>",
+        "start": "<start date>",
+        "end": "<end date>"
+    },
+    {
+        // next event
+    }    
+]
+```
 
-Post: "/api/new/event"
+### Update event
 
-* USER OPERATIONS
+*Method:* POST
 
-1. Add user 
+*Endpoint:* `/api/update/event`
 
-POST: "/api/signup"
+*Notes:* Post body must include `id` property as well as any other event properties you wish to alter.
+
+### Remove event
+
+*Method:* GET
+
+*Endpoint:* `/api/remove/event/<id>`
+
+*Notes:* `<id>` is the ID of the event you wish to remove from the database.
+
+### Add event
+
+*Method:* POST
+
+*Endpoint:* `/api/new/event`
+
+*Notes:* Event body looks like:
+```javascript
+{ 
+    "title": "<title>",
+    "description": "<description>",
+    "start": "<start date>",
+    "end": "<end date>"
+}
+```
+
+## User management
+
+*Notes:* Only a properly logged-in administrative user can manage users.
+
+- [Retrieve all users](#retrieve-all-users)
+- [Add user](#add-user)
+
+### Add user 
+
+*Method:* POST
+
+*Endpoint:* `/api/signup`
+
+*Notes:* User post body looks like: 
+```javascript
+{
+    "username": "<username>",
+    "password": "<password>"
+}
+```
+Passwords are hashed before database storage. They are not returned with any other user endpoints. They can be reset by other administrative users, but not seen.
+
+*Returns:* 
 
 2. Log-in user
 
