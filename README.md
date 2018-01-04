@@ -26,10 +26,10 @@ $.ajax({
     })
 }
 ```
-## Endpoint quick links
+## Quick links
 - [Tour locations](#tour-locations)
-- [Friends of Tour management](#friends-of-tour-management)
-- [Tour event management](#tour-event-management)
+- [Friends of Tour](#friends-of-tour-management)
+- [Tour events](#tour-event-management)
 - [User management](#user-management)
 
 ## Tour locations    
@@ -44,23 +44,22 @@ $.ajax({
 
 *Endpoint:* `/api/locations`
 
-*Returns:* Tour sponsor and stop data
-
-When data is present, response looks like:
+*Returns:* Tour sponsor and stop data. When data is present, response looks like:
 ```javascript
 [   
     {
         
-        "name":"Location name",
-        "type":"TourStop|Sponsor",
-        "map":"true|false",
-        "address":"Street address",
-        "description":"Info on location",
-        "image":"url/to/image",
+        "name":"<Location name>",
+        "type":"<TourStop>|<Sponsor>",
+        "map":true|false,
+        "address":"<Street address>",
+        "description":"<Info on location>",
+        "image":"<url/to/image>",
         "pos":{
-            "lat":latitude,
-            "lng":longitute},
-        "_id":id
+            "lat":"<latitude>",
+            "lng":"<longitute>"
+            },
+        "_id":"<id>"
     },
     {
         //next place
@@ -77,16 +76,17 @@ When data is present, response looks like:
 *Returns:* New location object:  
 ```javascript
 {
-
-    "name":"Location name",
-    "type":"TourStop|Sponsor",
-    "map":"true|false",
-    "address":"Street address",
-    "description":"Info on location",
-    "image":"url/to/image",
+    "name":"<Location name>",
+    "type":"<TourStop>|<Sponsor>",
+    "map":true|false,
+    "address":"<Street address>",
+    "description":"<Info on location>",
+    "image":"<url/to/image>",
     "pos":{
-        "lat":latitude,
-        "lng":longitude}
+        "lat":"<latitude>",
+        "lng":"<longitute>"
+        },
+    "_id":"<id>"
 }
 ```
 
@@ -96,7 +96,9 @@ When data is present, response looks like:
 
 *Endpoint:* `/api/remove/location/<id>`
 
-Note: `<id>` is the ID of the tour location you wish to delete from the database.
+*Note:* `<id>` is the ID of the tour location you wish to delete from the database.
+
+*Returns:* JSON with success flag, message confirming ID of removed location
 
 ### Update location
 
@@ -108,7 +110,7 @@ Note: `<id>` is the ID of the tour location you wish to delete from the database
 
 *Returns:* Updated location object.
 
-## Friends of Tour management
+## Friends of Tour
 
 - [Retrieve Friends of Tour](#retrieve-friends-of-tour)
 
@@ -122,7 +124,7 @@ Note: `<id>` is the ID of the tour location you wish to delete from the database
 
 *Returns:* Array of current "Friends of the Tour"
 
-## Tour event management
+## Tour events
 
 - [Retrieve all events](#retrieve-all-events)
 - [Update event](#update-event)
@@ -187,7 +189,43 @@ Note: `<id>` is the ID of the tour location you wish to delete from the database
 *Notes:* Only a properly logged-in administrative user can manage users.
 
 - [Retrieve all users](#retrieve-all-users)
+- [Sign in user](#sign-in-user)
 - [Add user](#add-user)
+- [Update user](#update-user)
+- [Remove user](#remove-user)
+- [Create system token](#create-system-token)
+
+### Retrieve all users
+
+*Method:* GET
+
+*Endpoint:* `/api/users`
+
+*Returns:* Array of all users in database, as objects containing `username` and `_id` properties.
+
+### Sign in user
+
+*Method:* POST
+
+*Endpoint:* `/api/signin`
+
+*Notes:* This is the only endpoint that does not require an `x-access-token`. The post body looks like:
+```javascript
+{
+    "username":"<username>",
+    "password":"<password>"
+}
+```
+
+*Returns:* Error messages if user not found or password not authenticated. Successful login returns:
+```javascript
+{
+    "success":true,
+    "token": "<token>",
+    "user": "<username>",
+    "message": "Welcome, <username>"
+}
+```
 
 ### Add user 
 
@@ -204,8 +242,56 @@ Note: `<id>` is the ID of the tour location you wish to delete from the database
 ```
 Passwords are hashed before database storage. They are not returned with any other user endpoints. They can be reset by other administrative users, but not seen.
 
+*Returns:* Username
+
+### Update user
+
+*Method:* POST
+
+*Endpoint:* `api/update/user`
+
+*Notes:* In addition to `username` and/or `password` properites, post body must also include the `id` of the user you wish to alter.
+
+*Returns:* Error message if user already exists (or other database failure), or if successful, a success message and the user's `username` and `id`.
+
+### Remove user
+
+*Method:* GET
+
+*Endpoint:* `/api/remove/user/<id>`
+
+*Notes:* `<id>` is the ID of the user you wish to remove from the database.
+
+*Returns:* Success message that confirms the ID of the removed user. 
+
+### Create system token
+
+*Method:* POST
+
+*Endpoint:* `/api/token`
+
+*Notes:* This endpoint provides for the creation of a token that can be used by an app to access endpoints. 
+
+*Important:* The database will NOT store the token. It should be stored in a secure place by the app developer. 
+
+The post request's body should contain:
+```javascript
+{
+    "name":"<client name>",
+    "email":"<a contact email for this client>"
+}
+```
+
 *Returns:* 
-
-2. Log-in user
-
-POST: "/api/signin"
+```javascript
+{
+    "success":true|false,
+    "client":{
+        "name": "<client name>",
+        "email": "<client email>"
+        "id": "<client id>",
+        "token":"<token>"
+    },
+    "message": "Client <client name> created. Keep token in a safe place."      
+}
+```

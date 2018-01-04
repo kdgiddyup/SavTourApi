@@ -262,6 +262,7 @@ app.get("/api/events", VerifyToken, function(req,res,next){
 /**** USER OPERATIONS ****/
 // generate system token
 app.post("/api/token", VerifyToken, (req, res, next)=>{
+    console.log(req.body);
     var clientUser = new Client(req.body);
     clientUser.save( (error,client)=>{
         console.log("ERROR",error,"CLIENT:",client);
@@ -283,10 +284,10 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
                 "success":true,
                 "client": {
                     name: client.name,
-                    email: client.email
+                    email: client.email,
+                    id: client._id,
+                    token: token
                 },
-                "id": client._id,
-                "token":token,
                 "message":`Client ${client.username} created. Keep token in a safe place.`
             })
         }
