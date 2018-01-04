@@ -320,7 +320,7 @@ The post request's body should contain:
         "id": "<client id>",
         "token":"<token>"
     },
-    "message": "Client <client name> created. Keep token in a safe place."      
+    "message": "Client <client name> created. Keep this token in a safe place. It will NOT be stored in our database:<br/> <textarea>{token}</textarea>."      
 }
 ```
 ### Update client
