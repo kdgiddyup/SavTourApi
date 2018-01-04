@@ -57,7 +57,7 @@ app.post("/api/new/location", VerifyToken, function(req, res, next) {
 
 
 // Retrieve all saved locations
-app.get("/api/locations", VerifyToken, function(req,res){
+app.get("/api/locations", VerifyToken, function(req,res,next){
     // retrieve all location docs in Mongo DB
     Location.find ({}, function(err, places){
       if(err){
@@ -355,4 +355,78 @@ app.post("/api/token", VerifyToken, (req, res, next)=>{
           }
       });
     });
+
+    // retrieve all users
+    app.get("/api/users", VerifyToken, function(req,res,next){
+        // retrieve all location docs in Mongo DB
+        User.find({}, 
+            (err, users)=>{
+        if(err){
+            res.json(
+                {
+                    success:false,
+                    message:err
+                });
+        }
+        else{
+            res.json(
+                {
+                    success:true,
+                    data:users
+                });
+        }
+        });
+    });
+
+    // update user
+    app.post("/api/update/user", VerifyToken, function(req, res, next){
+    
+        console.log(`attempting to update ${req.body._id}`);
+        User.findOneAndUpdate( {
+            "_id":req.body._id
+        }, req.body, {
+            new:true, 
+            upsert: true
+        }, (err,user)=>{
+        if (err) {
+            var message = err;
+            if (err.code == 11000) {
+                message = "That username already exists. Try again!"
+            };
+            res.json({
+                success:false,
+                message:message
+            })
+        }
+        else {
+            res.json({
+                success: true,
+                message:`User ${user._id} updated`,
+                data: {
+                    username: user.username,
+                    _id: user._id
+                    }
+                })
+            }
+        });
+    });
+
+    // Remove user
+    app.get("/api/remove/user/:id", VerifyToken, function(req,res,next){
+        User.remove({ _id: req.params.id }, function (err) {
+        if (err) {
+            res.json({
+                success:false,
+                message:err
+            })
+        }
+        else {
+            res.json({
+                success: true,
+                message:`${req.params.id} removed`
+            })
+        }
+        });
+    });
+
 };

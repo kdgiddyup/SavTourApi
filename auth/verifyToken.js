@@ -21,7 +21,6 @@ verifyToken = (req, res,  next)=>{
             }
             // token is verified; save ID and admin status to req for use in other routes
             else {
-                console.log("decoded:",decoded);
                 req.userId = decoded.id;
                 // send flow to next() function
                 next();
