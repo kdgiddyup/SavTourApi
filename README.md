@@ -343,7 +343,7 @@ The post request's body should contain:
 ```
 ### Remove client
 
-*Method:* GET,
+*Method:* GET
 
 *Endpoint:* `/api/remove/client/{id}`
 
