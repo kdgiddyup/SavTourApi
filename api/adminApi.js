@@ -238,98 +238,98 @@ app.get("/api/friends/", VerifyToken, function(req,res,next){
         });
     });
 
-// Retrieve all tour events
-app.get("/api/events", VerifyToken, function(req,res,next){
-    // retrieve all event docs in Mongo DB
-    Event.find ({}, function(err, data){
-      if(err){
-        res.json(
-            {
-                success:false,
-                message:err
-            });
-      }
-      else{
-        res.json(
-            {
-                success:true,
-                data:data
-            });
-      }
-    });
-});
-
-
-
-/**** CLIENT OPERATIONS ****/
-
-// add new client
-app.post("/api/new/client", VerifyToken, (req, res, next)=>{
-    var clientUser = new Client(req.body);
-    clientUser.save( (error,client)=>{
-        if (error) {
-            if (error.code === 11000) {
-                var message = "That client already exists. Try again!"
-            }
-            else {
-                var message = error.message;
-            };
-            res.json({
-                "success":false,
-                "message": message
+    // Retrieve all tour events
+    app.get("/api/events", VerifyToken, function(req,res,next){
+        // retrieve all event docs in Mongo DB
+        Event.find ({}, function(err, data){
+        if(err){
+            res.json(
+                {
+                    success:false,
+                    message:err
                 });
-            }
-        else {
-            // success: create a token for this client
-            var token = jwt.sign({
-                id : client._id,
-                name: client.name,
-                clientEmail: client.clientEmail
-            }, config.authSecret); 
-            
-            res.json({
-                "success":true,
-                "client": {
-                    name: client.name,
-                    clientEmail: client.clientEmail,
-                    id: client._id,
-                    token: token
-                },
-                "message":`Client ${client.name} created. Keep this token in a safe place. It will NOT be stored in our database:<br/> <textarea>${token}</textarea>.`
-            })
         }
-    })
-}); // end generate system token route
+        else{
+            res.json(
+                {
+                    success:true,
+                    data:data
+                });
+        }
+        });
+    });
 
-// retrieve all clients
-app.get("/api/clients", VerifyToken, function(req,res,next){
-    // retrieve all client records in Mongo DB
-    Client.find({})
-    .select("name clientEmail _id") 
-    .exec( (err, clients)=>{
-    if(err){
-        res.json(
-            {
-                success:false,
-                message:err
-            });
-    }
-    else{
-        res.json(
-            {
-                success:true,
-                data:clients
-            });
-    }
-    });  // end client .exec callback
-});
+
+
+    /**** CLIENT OPERATIONS ****/
+
+    // add new client
+    app.post("/api/new/client", VerifyToken, (req, res, next)=>{
+        var clientUser = new Client(req.body);
+        clientUser.save( (error,client)=>{
+            if (error) {
+                if (error.code === 11000) {
+                    var message = "That client already exists. Try again!"
+                }
+                else {
+                    var message = error.message;
+                };
+                res.json({
+                    "success":false,
+                    "message": message
+                    });
+                }
+            else {
+                // success: create a token for this client
+                var token = jwt.sign({
+                    id : client._id,
+                    name: client.name,
+                    clientEmail: client.clientEmail
+                }, config.authSecret); 
+                
+                res.json({
+                    "success":true,
+                    "client": {
+                        name: client.name,
+                        clientEmail: client.clientEmail,
+                        id: client._id,
+                        token: token
+                    },
+                    "message":`Client ${client.name} created. Keep this token in a safe place. It will NOT be stored in our database:<br/> <textarea>${token}</textarea>.`
+                })
+            }
+        })
+    }); // end generate system token route
+
+    // retrieve all clients
+    app.get("/api/clients", VerifyToken, function(req,res,next){
+        // retrieve all client records in Mongo DB
+        Client.find({})
+        .select("name clientEmail _id") 
+        .exec( (err, clients)=>{
+        if(err){
+            res.json(
+                {
+                    success:false,
+                    message:err
+                });
+        }
+        else{
+            res.json(
+                {
+                    success:true,
+                    data:clients
+                });
+        }
+        });  // end client .exec callback
+    });
 
     // update client
     app.post("/api/update/client", VerifyToken, function(req, res, next){
     
-        console.log(`attempting to update ${req.body._id}`);
+        console.log(`attempting to update ${req.body.id}`);
         Client.findOneAndUpdate( {
-            "_id":req.body._id
+            "_id":req.body.id
         }, req.body, {
             new:true, 
             upsert: true
@@ -351,6 +351,8 @@ app.get("/api/clients", VerifyToken, function(req,res,next){
                 name: client.name,
                 clientEmail: client.clientEmail
             }, config.authSecret); 
+            // add token to client object being sent to front-end
+            client.token = token;
             res.json({
                 success: true,
                 message:`Client ${client.name} updated. Here is its new token. Keep it in a safe place. It will NOT be stored in our database:<br/><textarea>${token}</textarea>`,
@@ -464,7 +466,7 @@ app.get("/api/clients", VerifyToken, function(req,res,next){
     // update user
     app.post("/api/update/user", VerifyToken, function(req, res, next){
     
-        console.log(`attempting to update ${req.body._id}`);
+        console.log(`attempting to update ${req.body.id}`);
         User.findOneAndUpdate( {
             "_id":req.body._id
         }, req.body, {

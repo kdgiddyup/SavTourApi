@@ -60,7 +60,7 @@ $.ajax({
             "lat":"<latitude>",
             "lng":"<longitute>"
             },
-        "_id":"<id>"
+        "_id":"{id}"
     },
     {
         //next place
@@ -87,7 +87,7 @@ $.ajax({
         "lat":"<latitude>",
         "lng":"<longitute>"
         },
-    "_id":"<id>"
+    "_id":"{id}"
 }
 ```
 
@@ -95,9 +95,9 @@ $.ajax({
 
 *Method:* GET
 
-*Endpoint:* `/api/remove/location/<id>`
+*Endpoint:* `/api/remove/location/{id}`
 
-*Note:* `<id>` is the ID of the tour location you wish to delete from the database.
+*Note:* `{id}` is the ID of the tour location you wish to delete from the database.
 
 *Returns:* JSON with success flag, message confirming ID of removed location
 
@@ -165,9 +165,9 @@ $.ajax({
 
 *Method:* GET
 
-*Endpoint:* `/api/remove/event/<id>`
+*Endpoint:* `/api/remove/event/{id}`
 
-*Notes:* `<id>` is the ID of the event you wish to remove from the database.
+*Notes:* `{id}` is the ID of the event you wish to remove from the database.
 
 ### Add event
 
@@ -259,16 +259,40 @@ Passwords are hashed before database storage. They are not returned with any oth
 
 *Method:* GET
 
-*Endpoint:* `/api/remove/user/<id>`
+*Endpoint:* `/api/remove/user/{id}`
 
-*Notes:* `<id>` is the ID of the user you wish to remove from the database.
+*Notes:* `{id}` is the ID of the user you wish to remove from the database.
 
 *Returns:* Success message that confirms the ID of the removed user. 
 
 ## Clients
 
-- [Add new client](#add-new-client)
-### Add new client
+- [Retrieve clients](#retrieve-clients)
+- [Add client](#add-client)
+- [Update client](#update-client)
+- [Remove client](#remove-client)
+
+### Retrieve clients
+
+*Method:* GET
+
+*Endpoint:* `/api/clients`
+
+*Returns:* Array of existing API clients. Client objects look like:
+```javascript
+[
+    {
+        "name":"<client name>",
+        "clientEmail":"<email associated with client>"
+    },
+    {
+        // next client
+    }
+```
+ *Important:* The database will not store tokens. If a new token is required, the client should be edited, or deleted and recreated. A new token will be returned upon completion of either of those actions.  
+
+
+### Add client
 
 *Method:* POST
 
@@ -282,7 +306,7 @@ The post request's body should contain:
 ```javascript
 {
     "name":"<client name>",
-    "email":"<a contact email for this client>"
+    "clientEmail":"<a contact email for this client>"
 }
 ```
 
@@ -292,10 +316,43 @@ The post request's body should contain:
     "success":true|false,
     "client":{
         "name": "<client name>",
-        "email": "<client email>"
+        "clientEmail": "<client email>"
         "id": "<client id>",
         "token":"<token>"
     },
     "message": "Client <client name> created. Keep token in a safe place."      
+}
+```
+### Update client
+
+*Method:* POST
+
+*Endpoint:* `/api/update/client`
+
+*Notes:* In addition to the `name` and/or `clientEmail` properties you wish to alter, the post request body must also include an `id` property with the ID of the client you wish to update.
+
+*Returns:* JSON with token:
+```javascript
+{
+    "success": true|false,
+    "message": /* if successful */ "Client <client.name> updated. Here is its new token. Keep it in a safe place. It will NOT be stored in our database:<br/><textarea>{token}</textarea>",
+    "data": {
+        // full client object
+        }
+}
+```
+### Remove client
+
+*Method:* GET,
+
+*Endpoint:* `/api/remove/client/{id}`
+
+*Notes:* `{id}` is the ID  of the client you wish to remove from the database
+
+*Returns:* JSON confirming removal:
+```javascript
+{
+    "success":true,
+    "message":"{id} removed"
 }
 ```
