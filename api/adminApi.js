@@ -49,7 +49,8 @@ app.post("/api/new/location", VerifyToken, function(req, res, next) {
             // return the saved document as a complete mongo doc, so that it includes the doc._id
             {
             success: true,
-            data : doc
+            data : doc,
+            googleApi : process.env.GOOGLE_API
           })
       }
     });
