@@ -89,7 +89,8 @@ app.get("/api/locations", VerifyToken, function(req,res,next){
         res.json(
             {
                 success:true,
-                data:places
+                data:places,
+                googleApi: process.env.GOOGLE_API
             });
       }
     });
