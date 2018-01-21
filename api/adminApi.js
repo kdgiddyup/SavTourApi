@@ -431,7 +431,8 @@ app.get("/api/friends/", VerifyToken, function(req,res,next){
                 "success":true,
                 "token": token,
                 "user":req.body.username,
-                "message":`Welcome, ${req.body.username}`
+                "message":`Welcome, ${req.body.username}`,
+                "googleApi":process.env.GOOGLE_API
               })
             } 
           else
