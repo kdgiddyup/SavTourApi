@@ -1,14 +1,16 @@
 // ==================================================
 // DEPENDENCIES
 //===================================================
-const express=require("express");
-const bodyParser = require("body-parser");
-const logger = require("morgan");
+const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 var cors = require("cors");
 
-const dotenv=require("dotenv");
-dotenv.config();
+if (process.env.NODE_ENV === undefined) {
+  const dotenv = require("dotenv");
+  dotenv.config();
+  const logger = require("morgan");
+}
 
 // using the cors module to simplify setting headers
 app.use(cors());
@@ -18,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
-app.use(bodyParser.json({ type: "application/vnd.api+json" })); 
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
 // Static directory
 app.use(express.static(__dirname + "/app/public"));
@@ -28,10 +30,7 @@ app.use(express.static(__dirname + "/app/public"));
 var mongoose = require("mongoose");
 var MONGODB = process.env.MONGODB_URI || "mongodb://localhost/savannahtour";
 
-mongoose.connect(  
-  MONGODB,
-  { useMongoClient: true}
-  );
+mongoose.connect(MONGODB, { useMongoClient: true });
 
 var db = mongoose.connection;
 
