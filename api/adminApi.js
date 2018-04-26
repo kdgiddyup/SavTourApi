@@ -49,7 +49,8 @@ app.post("/api/new/location", VerifyToken, function(req, res, next) {
             // return the saved document as a complete mongo doc, so that it includes the doc._id
             {
             success: true,
-            data : doc
+            data : doc,
+            googleApi : process.env.GOOGLE_API
           })
       }
     });
@@ -88,7 +89,8 @@ app.get("/api/locations", VerifyToken, function(req,res,next){
         res.json(
             {
                 success:true,
-                data:places
+                data:places,
+                googleApi: process.env.GOOGLE_API
             });
       }
     });
@@ -429,7 +431,8 @@ app.get("/api/friends/", VerifyToken, function(req,res,next){
                 "success":true,
                 "token": token,
                 "user":req.body.username,
-                "message":`Welcome, ${req.body.username}`
+                "message":`Welcome, ${req.body.username}`,
+                "googleApi":process.env.GOOGLE_API
               })
             } 
           else
